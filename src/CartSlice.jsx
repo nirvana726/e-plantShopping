@@ -11,13 +11,13 @@ const cartSlice = createSlice({
     reducers: {
         addToCart: (state, action) => {
             const newItem = action.payload; // The item to add
-            const existingItem = state.items.find(item => item.name === newItem.name); // Check if item already exists
+            const existingItem = state.items.find(item => item.id === newItem.id); // Check if item already exists by ID
 
             if (existingItem) {
                 // If the item is already in the cart, increase the quantity
                 existingItem.quantity += 1;
             } else {
-                // If the item is not in the cart, add it
+                // If the item is not in the cart, add it with quantity 1
                 state.items.push({ ...newItem, quantity: 1 });
             }
 
@@ -25,14 +25,14 @@ const cartSlice = createSlice({
             state.totalAmount += parseFloat(newItem.cost.replace('$', ''));
         },
         removeFromCart: (state, action) => {
-            const name = action.payload; // The name of the item to remove
-            const existingItem = state.items.find(item => item.name === name); // Find the item in the cart
+            const id = action.payload; // The id of the item to remove
+            const existingItem = state.items.find(item => item.id === id); // Find the item in the cart
 
             if (existingItem) {
                 // Update total amount by subtracting the cost of the item
                 state.totalAmount -= parseFloat(existingItem.cost.replace('$', '')) * existingItem.quantity;
                 // Remove the item from the cart
-                state.items = state.items.filter(item => item.name !== name);
+                state.items = state.items.filter(item => item.id !== id);
             }
         },
         clearCart: (state) => {
@@ -40,11 +40,24 @@ const cartSlice = createSlice({
             state.items = [];
             state.totalAmount = 0;
         },
+        updateQuantity: (state, action) => {
+            const { id, quantity } = action.payload; // Destructure id and quantity from payload
+            const existingItem = state.items.find(item => item.id === id);
+
+            if (existingItem) {
+                // Update the total amount first
+                state.totalAmount -= parseFloat(existingItem.cost.replace('$', '')) * existingItem.quantity;
+                // Update quantity
+                existingItem.quantity = quantity;
+                // Update total amount after changing the quantity
+                state.totalAmount += parseFloat(existingItem.cost.replace('$', '')) * existingItem.quantity;
+            }
+        },
     },
 });
 
 // Exporting actions for use in components
-export const { addToCart, removeFromCart, clearCart } = cartSlice.actions;
+export const { addToCart, removeFromCart, clearCart, updateQuantity } = cartSlice.actions;
 
 // Exporting the reducer to be used in the Redux store
 export default cartSlice.reducer;

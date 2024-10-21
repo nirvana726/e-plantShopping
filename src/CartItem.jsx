@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types'; // Import PropTypes
 import { useSelector, useDispatch } from 'react-redux';
 import { removeItem, updateQuantity } from './CartSlice';
 import './CartItem.css';
@@ -7,12 +8,10 @@ const CartItem = ({ onContinueShopping }) => {
   const cart = useSelector(state => state.cart.items);
   const dispatch = useDispatch();
 
-  // Calculate total amount for all products in the cart
   const calculateTotalAmount = () => {
     return cart.reduce((total, item) => total + item.cost * item.quantity, 0);
   };
 
-  // Calculate total quantity for the cart icon
   const calculateTotalQuantity = () => {
     return cart.reduce((total, item) => total + item.quantity, 0);
   };
@@ -32,7 +31,7 @@ const CartItem = ({ onContinueShopping }) => {
     if (item.quantity > 1) {
       dispatch(updateQuantity({ id: item.id, quantity: item.quantity - 1 }));
     } else {
-      handleRemove(item); // If quantity is 1 and user tries to decrement, remove the item
+      handleRemove(item); // Remove if quantity is 1 and user tries to decrement
     }
   };
 
@@ -40,7 +39,6 @@ const CartItem = ({ onContinueShopping }) => {
     dispatch(removeItem(item.id));
   };
 
-  // Calculate total cost based on quantity for an item
   const calculateTotalCost = (item) => {
     return item.cost * item.quantity;
   };
@@ -50,7 +48,7 @@ const CartItem = ({ onContinueShopping }) => {
       <h2 style={{ color: 'black' }}>Total Cart Amount: ${calculateTotalAmount()}</h2>
       <div>
         {cart.map(item => (
-          <div className="cart-item" key={item.name}>
+          <div className="cart-item" key={item.id}> {/* Use item.id for key */}
             <img className="cart-item-image" src={item.image} alt={item.name} />
             <div className="cart-item-details">
               <div className="cart-item-name">{item.name}</div>
@@ -68,7 +66,7 @@ const CartItem = ({ onContinueShopping }) => {
       </div>
       <div style={{ marginTop: '20px', color: 'black' }} className='total_cart_amount'></div>
       <div className="continue_shopping_btn">
-        <button className="get-started-button" onClick={(e) => handleContinueShopping(e)}>Continue Shopping</button>
+        <button className="get-started-button" onClick={handleContinueShopping}>Continue Shopping</button>
         <br />
         <button className="get-started-button1">Checkout</button>
       </div>
@@ -76,6 +74,11 @@ const CartItem = ({ onContinueShopping }) => {
       <CartIcon totalQuantity={calculateTotalQuantity()} />
     </div>
   );
+};
+
+// Add prop types for better validation
+CartItem.propTypes = {
+  onContinueShopping: PropTypes.func,
 };
 
 export default CartItem;
