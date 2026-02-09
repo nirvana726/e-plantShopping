@@ -247,8 +247,8 @@ function ProductList() {
         setShowCart(false); // Hide the cart when navigating to About Us
     };
 
-    const calculateTotalQuantity = () => {
-        const cartItems = useSelector((state) => state.cart.items);
+    const cartItems = useSelector((state) => state.cart.items);
+        const calculateTotalQuantity = () => {
         return cartItems.reduce((total, item) => total + item.quantity, 0);
     }
 
@@ -279,12 +279,17 @@ function ProductList() {
                 <div className="tag">
                     <div className="luxury">
                         <img src="https://cdn.pixabay.com/photo/2020/08/05/13/12/eco-5465432_1280.png" alt="" />
-                        <a href="/" style={{ textDecoration: 'none' }}>
-                            <div>
+                            <div
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => {
+                                setShowCart(false);
+                                setShowPlants(false);
+                                }}
+                                >
                                 <h3 style={{ color: 'white' }}>Paradise Nursery</h3>
                                 <i style={{ color: 'white' }}>Where Green Meets Serenity</i>
                             </div>
-                        </a>
+
                     </div>
 
                 </div>
